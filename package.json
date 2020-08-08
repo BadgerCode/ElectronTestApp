@@ -1,0 +1,14 @@
+{
+  "name": "electronjsapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron . /watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^9.2.0"
+  }
+}
