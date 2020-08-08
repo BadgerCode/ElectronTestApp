@@ -1,17 +1,25 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const fs = require("fs");
+const path = require("path");
+const { menu } = require("./menu");
+
+let mainWindow;
+const isWindows = process.platform === "win32";
 
 function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
-    }
+      preload: path.join(__dirname, "preload.js")
+    },
+    frame: false
   })
 
   // and load the index.html of the app.
-  win.loadFile('index.html')
+  mainWindow.loadFile('index.html')
+  mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
@@ -40,15 +48,18 @@ app.on('activate', () => {
 // code. You can also put them in separate files and require them here.
 
 
-ipcMain.on("btnclick", function (event, arg) {
+ipcMain.on("btnclick", function(event, arg) {
   //create new window
   var newWindow = new BrowserWindow({
-    width: 450, height: 300, show:
-      false, webPreferences: {
-        webSecurity: false, plugins:
-          true, nodeIntegration: false
-      }
-  });  // create a new window
+    width: 450,
+    height: 300,
+    show: false,
+    webPreferences: {
+      webSecurity: false,
+      plugins: true,
+      nodeIntegration: false
+    }
+  }); // create a new window
 
   var facebookURL = "https://www.facebook.com";
 
@@ -58,4 +69,36 @@ ipcMain.on("btnclick", function (event, arg) {
   // inform the render process that the assigned task finished. Show a message in html
   // event.sender.send in ipcMain will return the reply to renderprocess
   event.sender.send("btnclick-task-finished", "yes");
+});
+
+ipcMain.on(`display-app-menu`, function(e, args) {
+  if (isWindows && mainWindow) {
+    menu.popup({
+      window: mainWindow,
+      x: args.x,
+      y: args.y
+    });
+  }
+});
+
+
+ipcMain.on(`test-event`, function(e, args) {
+  console.log("test event")
+  dialog
+    .showSaveDialog({})
+    .then(result => {
+      if (result.canceled)
+        return;
+
+      var filename = result.filePath;
+      console.log(filename)
+
+      try {
+        fs.writeFileSync(filename + ".txt", "Hey. I am the file", "utf-8");
+        console.log("File saved")
+      } catch (e) {
+        console.log("Failed to save file")
+        console.log(e);
+      }
+    });
 });

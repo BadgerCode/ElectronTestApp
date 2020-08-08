@@ -6,107 +6,42 @@
   <title>Hello World!</title>
   <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
   <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <script src="./font-awesome-kit.js"></script>
   <link rel="stylesheet" type="text/css" href="./styles.css" />
 </head>
 
 <body>
-  <h1>Hello World!</h1>
-  <div>
-    We are using node
-    <script>document.write(process.versions.node)</script>,
-    Chrome
-    <script>document.write(process.versions.chrome)</script>,
-    and Electron
-    <script>document.write(process.versions.electron)</script>.
+  <div id="menu-bar">
+    <div class="left" role="menu">
+      <button class="menubar-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+      <h5>My Awesome App</h5>
+    </div>
+    <div class="right">
+      <button class="menubar-btn" id="minimize-btn"><i class="fas fa-window-minimize"></i></button>
+      <button class="menubar-btn" id="max-unmax-btn"><i class="far fa-square"></i></button>
+      <button class="menubar-btn" id="close-btn"><i class="fas fa-times"></i></button>
+    </div>
   </div>
 
-  <div>
-    <button id="loadnewwindow">click to load new window</button>
-    <div id="message"></div>
+  <div id="container">
+    <h1>Hello World!</h1>
 
-    <button id="home">Home</button>
+    <div>
+      <button id="mybutton">Click for file IO</button>
+    </div>
   </div>
-
-  <div>
-    <button id="mybutton">Click for file IO</button>
-  </div>
-
-  <div>
-    <button id="close">Close</button>
-  </div>
-
-
-
-  <!-- EXAMPLE: Sending events from front end to electron app -->
-  <script type="text/javascript">
-
-    // include the ipc module to communicate with main process.
-    const ipcRenderer = require('electron').ipcRenderer;
-
-    const btnclick = document.getElementById('loadnewwindow');
-    btnclick.addEventListener('click', function () {
-      var arg = "secondparam";
-
-      //send the info to main process . we can pass any arguments as second param.
-      ipcRenderer.send("btnclick", arg); // ipcRender.send will pass the information to main process
-    });
-
-    ipcRenderer.on('btnclick-task-finished', function (event, param) {
-      document.getElementById("message").innerHTML = "Opened a window"
-    });
-  </script>
-
-
-
-
-
-  <!-- EXAMPLE: Calling electron app functions from the front end -->
-  <script type="text/javascript">
-
-    var homeButton = document.getElementById("home");
-    const remote = require('electron').remote;
-
-    homeButton.onclick = function () {
-      var mainWindow = remote.getCurrentWindow();
-      mainWindow.loadURL('file://' + __dirname + '/home.html');
-    }
-  </script>
-
 
 
   <!-- EXAMPLE: Calling File IO functions from the front end -->
   <script>
-    const fs = require("fs");
-    const { dialog } = require("electron").remote;
-
     document.getElementById("mybutton").addEventListener("click", () => {
       console.log("button click")
-      dialog
-        .showSaveDialog({})
-        .then(result => {
-          var filename = result.filePath;
-          console.log(filename)
-          try {
-            fs.writeFileSync(filename + ".txt", "Hey. I am the file", "utf-8");
-            console.log("File saved")
-          }
-          catch (e) {
-            console.log("Failed to save file")
-            console.log(e);
-          }
-        });
+      testEvent();
     });
   </script>
 
 
-
-  <!-- EXAMPLE: Custom close button -->
-  <script>
-    document.getElementById("close").addEventListener("click", () => {
-      var mainWindow = remote.getCurrentWindow();
-      mainWindow.close();
-    });
-  </script>
+  <script src="./renderer.js"></script>
 </body>
 
 </html>
