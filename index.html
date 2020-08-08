@@ -31,6 +31,10 @@
     <button id="mybutton">Click for file IO</button>
   </div>
 
+  <div>
+    <button id="close">Close</button>
+  </div>
+
 
 
   <!-- EXAMPLE: Sending events from front end to electron app -->
@@ -91,6 +95,16 @@
             console.log(e);
           }
         });
+    });
+  </script>
+
+
+
+  <!-- EXAMPLE: Custom close button -->
+  <script>
+    document.getElementById("close").addEventListener("click", () => {
+      var mainWindow = remote.getCurrentWindow();
+      mainWindow.close();
     });
   </script>
 </body>
