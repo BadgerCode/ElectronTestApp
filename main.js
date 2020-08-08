@@ -44,6 +44,12 @@ app.on('activate', () => {
   }
 })
 
+app.setAboutPanelOptions({
+  applicationName: "Electron JS App",
+  applicationVersion: "1.0.0",
+  version: "1.0.0"
+});
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
